@@ -1,23 +1,26 @@
-import Pricing from 'components/Pricing';
-import { getActiveProductsWithPrices } from 'utils/supabase-client';
-import { Product } from 'types';
-import { GetStaticPropsResult } from 'next';
+import Tasks from '@/components/ui/Tasks';
+import { useUser } from '@supabase/supabase-auth-helpers/react';
+import { NextPage } from 'next';
+import Head from 'next/head';
+import { getUserTasks } from '../utils/supabase-client';
+import { useState, useEffect } from 'react';
 
-interface Props {
-  products: Product[];
-}
+const Home: NextPage = () => {
+  const { user } = useUser();
+  const [tasks, setTasks] = useState<Array<any>>([]);
 
-export default function PricingPage({ products }: Props) {
-  return <Pricing products={products} />;
-}
+  useEffect(() => {
+    getUserTasks().then((x) => setTasks(x));
+  });
 
-export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
-  const products = await getActiveProductsWithPrices();
+  return (
+    <>
+      <Head>
+        <title>Sub-to-do</title>
+      </Head>
+      {user ? <Tasks tasks={tasks} /> : 'Please login'}
+    </>
+  );
+};
 
-  return {
-    props: {
-      products
-    },
-    revalidate: 60
-  };
-}
+export default Home;
