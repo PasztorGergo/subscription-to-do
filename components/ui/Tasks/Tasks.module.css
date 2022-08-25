@@ -1,5 +1,5 @@
 .taskForm {
-  @apply border-2 border-slate-500 rounded-lg px-4 py-3 flex justify-between my-5;
+  @apply border-2 border-slate-500 rounded-lg px-4 py-3 flex flex-col md:flex-row gap-y-4 justify-between my-5;
 }
 .btn {
   @apply ring-2 ring-pink-500 ring-opacity-50 rounded-lg px-3 flex-grow-[.15] py-1 font-bold text-sm uppercase;

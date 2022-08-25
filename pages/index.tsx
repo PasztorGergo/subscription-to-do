@@ -2,7 +2,7 @@ import Tasks from '@/components/ui/Tasks';
 import { useUser } from '@supabase/supabase-auth-helpers/react';
 import { NextPage } from 'next';
 import Head from 'next/head';
-import { getUserTasks } from '../utils/supabase-client';
+import { supabase } from '../utils/supabase-client';
 import { useState, useEffect } from 'react';
 
 const Home: NextPage = () => {
@@ -10,7 +10,14 @@ const Home: NextPage = () => {
   const [tasks, setTasks] = useState<Array<any>>([]);
 
   useEffect(() => {
-    getUserTasks().then((x) => setTasks(x));
+    const subscription = supabase
+      .from('tasks')
+      .on('*', (e) => setTasks(e.new))
+      .subscribe();
+
+    return () => {
+      supabase.removeSubscription(subscription);
+    };
   }, []);
 
   return (
