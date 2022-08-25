@@ -106,6 +106,19 @@ const copyBillingDetailsToCustomer = async (
   if (error) throw error;
 };
 
+export const insertTask = async (
+  task: string,
+  user_id: string,
+  order: number
+) => {
+  const { error, body } = await supabaseAdmin
+    .from('tasks')
+    .insert([{ task, order, user_id }], { returning: 'minimal' });
+  if (error) {
+    throw error;
+  }
+};
+
 const manageSubscriptionStatusChange = async (
   subscriptionId: string,
   customerId: string,

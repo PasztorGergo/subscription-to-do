@@ -11,7 +11,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     getUserTasks().then((x) => setTasks(x));
-  });
+  }, []);
 
   return (
     <>

@@ -8,6 +8,7 @@ import { UserProvider } from '@supabase/supabase-auth-helpers/react';
 import { supabaseClient } from '@supabase/supabase-auth-helpers/nextjs';
 import { AppProps } from 'next/app';
 import { MyUserContextProvider } from 'utils/useUser';
+import { Toaster } from 'react-hot-toast';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
@@ -16,6 +17,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <div className="bg-black">
+      <Toaster />
       <UserProvider supabaseClient={supabaseClient}>
         <MyUserContextProvider supabaseClient={supabaseClient}>
           <Layout>

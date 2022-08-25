@@ -1,3 +1,25 @@
 .taskForm {
-  @apply;
+  @apply border-2 border-slate-500 rounded-lg px-4 py-3 flex justify-between my-5;
+}
+.btn {
+  @apply ring-2 ring-pink-500 ring-opacity-50 rounded-lg px-3 flex-grow-[.15] py-1 font-bold text-sm uppercase;
+}
+.input {
+  @apply bg-transparent ring-2 ring-pink-500 ring-opacity-50 rounded-lg px-2 py-1 caret-pink-500;
+}
+.title,
+.subTitle {
+  @apply font-bold text-center;
+}
+.title {
+  @apply text-4xl mb-2;
+}
+.subTitle {
+  @apply text-xl;
+}
+.container {
+  @apply flex flex-col gap-y-3;
+}
+.container label {
+  @apply uppercase font-bold;
 }
