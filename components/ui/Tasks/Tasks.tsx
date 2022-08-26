@@ -1,18 +1,25 @@
 import { useUser } from '@/utils/useUser';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import s from './Tasks.module.css';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { postData } from '@/utils/helpers';
+import { supabase } from '@/utils/supabase-client';
+import { FaTrash } from 'react-icons/fa';
 
-type Props = {
-  tasks: Array<any>;
-};
-
-const Tasks = ({ tasks }: Props) => {
+const Tasks = () => {
   const { user } = useUser();
   const { register, reset, handleSubmit } = useForm();
   const [loading, setLoading] = useState<boolean>(false);
+  const [tasks, setTasks] = useState<Array<any> | null>([]);
+
+  useEffect(() => {
+    supabase
+      .from('tasks')
+      .select('*')
+      .order('order')
+      .then((x) => setTasks(x.data));
+  }, [loading]);
 
   const uploadTask = async (task: string) => {
     try {
@@ -20,14 +27,30 @@ const Tasks = ({ tasks }: Props) => {
       await fetch('/api/task', {
         body: JSON.stringify({
           task,
-          order: tasks.length,
+          order: tasks?.length,
           user_id: user?.id
         }),
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
     } catch (error: any) {
-      console.log(error);
+      toast.error(`An error occured: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const deleteTask = async (taskId: string) => {
+    try {
+      setLoading(true);
+      await fetch('/api/task', {
+        body: JSON.stringify({
+          taskId
+        }),
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      });
+    } catch (error: any) {
+      toast.error(`An error occured: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -69,11 +92,27 @@ const Tasks = ({ tasks }: Props) => {
       </section>
       <section>
         <h2 className={s.title}>Your list</h2>
-        {tasks.length > 0 ? (
-          tasks.map((x) => <p key={x.id}>{x.task}</p>)
-        ) : (
-          <h3 className={s.subTitle}>You haven't added any tasks</h3>
-        )}
+        {
+          //@ts-ignore
+          tasks.length > 0 ? (
+            tasks?.map((x) => (
+              <div
+                className="px-3 py-2 ring-pink-500 ring-2 ring-opacity-50 rounded-lg flex justify-between items-center"
+                key={x.id}
+              >
+                <p className="items-center">{x.task}</p>
+                <button
+                  className="bg-red-500 text-white text-opacity-70 p-3 rounded-lg"
+                  onClick={() => deleteTask(x.id)}
+                >
+                  <FaTrash />
+                </button>
+              </div>
+            ))
+          ) : (
+            <h3 className={s.subTitle}>You haven't added any tasks</h3>
+          )
+        }
       </section>
     </main>
   );

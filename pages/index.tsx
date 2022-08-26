@@ -7,25 +7,13 @@ import { useState, useEffect } from 'react';
 
 const Home: NextPage = () => {
   const { user } = useUser();
-  const [tasks, setTasks] = useState<Array<any>>([]);
-
-  useEffect(() => {
-    const subscription = supabase
-      .from('tasks')
-      .on('*', (e) => setTasks(e.new))
-      .subscribe();
-
-    return () => {
-      supabase.removeSubscription(subscription);
-    };
-  }, []);
 
   return (
     <>
       <Head>
         <title>Sub-to-do</title>
       </Head>
-      {user ? <Tasks tasks={tasks} /> : 'Please login'}
+      {user ? <Tasks /> : 'Please login'}
     </>
   );
 };

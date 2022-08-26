@@ -111,9 +111,34 @@ export const insertTask = async (
   user_id: string,
   order: number
 ) => {
+  const isSubscribed =
+    //@ts-ignore
+    (
+      await supabaseAdmin
+        .from('subscriptions')
+        .select('*')
+        .match({ user_id: user_id })
+    ).data?.length > 0;
+  const tasks = (
+    await supabaseAdmin.from('tasks').select('*').match({ user_id: user_id })
+  ).data?.length;
+  //@ts-ignore
+  if (!isSubscribed && tasks >= 5) {
+    throw new Error("You can't exceed 5 tasks as an unsubscribed user");
+  }
   const { error, body } = await supabaseAdmin
     .from('tasks')
     .insert([{ task, order, user_id }], { returning: 'minimal' });
+  if (error) {
+    throw error;
+  }
+};
+
+export const deleteTask = async (taskId: string) => {
+  const { error } = await supabaseAdmin
+    .from('tasks')
+    .delete()
+    .match({ id: taskId });
   if (error) {
     throw error;
   }
